@@ -92,3 +92,4 @@ if __name__ == "__main__":
     parser.add_argument("--frame_rate", type=int, default=1, help="Frame extraction rate (frames per second)")
     args = parser.parse_args()
     main(args.root_dir, args.output_dir, args.frame_rate)
+    
