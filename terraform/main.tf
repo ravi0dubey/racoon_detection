@@ -81,18 +81,3 @@ resource "google_storage_bucket" "dedup_images" {
     enabled = true
   }
 }
-
-resource "google_storage_bucket" "playground_bucket" {
-  name          = "04-playground-bucket${random_string.bucket_suffix.result}"
-  location      = "us-east1"
-  force_destroy = true
-  uniform_bucket_level_access = true
-
-  lifecycle {
-    ignore_changes = [name]
-  }
-
-  versioning {
-    enabled = true
-  }
-}
