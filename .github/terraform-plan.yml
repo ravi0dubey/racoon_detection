@@ -1,0 +1,39 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    branches:
+      - main  # Adjust this to your main branch if different
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.0.11
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v0.4.0
+      with:
+        credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    - name: Configure gcloud CLI
+      run: |
+        gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Change to terraform directory
+      run: cd terraform
+
+    - name: Initialize Terraform
+      run: terraform init
+      working-directory: terraform
+
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: terraform
