@@ -10,6 +10,9 @@ steps:
 images:
 - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}'
 
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
+
 substitutions:
   _REGION: us-central1
   _REPO_NAME: video-frame-extractor-repo
