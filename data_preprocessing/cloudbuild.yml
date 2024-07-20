@@ -1,15 +1,18 @@
 steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}', '.']
+  args: ['build', '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}', '.']
 
 # Push the container image to Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}']
+  args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}']
 
 images:
-- 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}'
+- '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}'
+
 options:
   logging: CLOUD_LOGGING_ONLY
-# Specify the build region
-  region: 'us-east1'
+
+substitutions:
+  _REGION: us-central1
+  _REPO_NAME: video-frame-extractor-repo
