@@ -1,0 +1,10 @@
+{
+    "animals": ["cats", "raccoons", "skunks"],
+    "images_per_category": 10,
+    "minimum_size": {
+      "width": 100,
+      "height": 100
+    },
+    "gcs_bucket": "your-gcs-bucket-name"
+  }
+  
