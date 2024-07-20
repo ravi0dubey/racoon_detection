@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     google = {
-      source  = "hashicorp/google"
-      version = "4.51.0"
+      source  = "hashicorp/google" # its google as we are working on gcp
+      version = "4.51.0"          # replace with aws or azure if needed 
     }
     random = {
       source  = "hashicorp/random"
@@ -11,7 +11,7 @@ terraform {
   }
   
   backend "gcs" {
-    bucket  = "terraform-state-eh-ml-mentorship-4"
+    bucket  = "terraform-state-eh-ml-mentorship-4" # Replace with your bucket name
     prefix  = "terraform/state"
   }
 }
