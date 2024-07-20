@@ -1,0 +1,11 @@
+steps:
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}', '.']
+
+# Push the container image to Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}']
+
+images:
+- 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}'
