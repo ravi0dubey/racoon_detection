@@ -11,3 +11,5 @@ images:
 - 'us-east1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/frame-extractor:${SHORT_SHA}'
 options:
   logging: CLOUD_LOGGING_ONLY
+# Specify the build region
+  region: 'us-east1'
