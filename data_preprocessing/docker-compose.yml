@@ -9,4 +9,4 @@ services:
       - INPUT_SOURCE=${INPUT_SOURCE}
       - OUTPUT_PATH=${OUTPUT_PATH}
       - FRAME_RATE=${FRAME_RATE:-1}
-    command: ["python", "eh_image_extractor.py"]
+    command: ["python", "rd_video_image_extractor.py"]

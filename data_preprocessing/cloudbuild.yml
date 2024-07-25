@@ -5,8 +5,8 @@ steps:
       'build',
       '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}',
       '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest',
-      '-f', 'data-preprocessing/Dockerfile',
-      'data-preprocessing'
+      '-f', 'data_preprocessing/Dockerfile',
+      'data_preprocessing'
     ]
 
   # Test the image

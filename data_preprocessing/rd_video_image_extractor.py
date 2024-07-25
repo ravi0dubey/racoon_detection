@@ -62,7 +62,7 @@ def extract_frames(video_file, output_dir, frame_rate, input_bucket=None, output
         with tempfile.TemporaryDirectory() as temp_dir:
             while success:
                 if frame_count % interval == 0:
-                    output_filename = f"{Path(video_file).stem}_{image_count+1:03d}.jpg"
+                    output_filename = f"{Path(video_file).stem}_{image_count+1:05d}.jpg"
                     local_output_path = os.path.join(temp_dir, output_filename)
                     cv2.imwrite(local_output_path, image)
                     logger.debug(f"Saved frame: {local_output_path}")

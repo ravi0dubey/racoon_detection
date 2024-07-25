@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  voxel51:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: voxel_51_image_dedup:latest
+    ports:
+      - "5151:5151"
+    volumes:
+      - ./:/app
+    environment:
+      - INPUT_BUCKET=${INPUT_BUCKET}
+      - OUTPUT_BUCKET=${OUTPUT_BUCKET}
+      - ANNOTATION_SET_BUCKET=${ANNOTATION_SET_BUCKET}
+      - IMAGES_PREFIX=${IMAGES_PREFIX}
+      - LOCAL_DIR=/app/images
+      - CREDENTIALS_PATH=/app/service_account.json
+      - THRESHOLD=${THRESHOLD}
+    command: >
+      python deduplicate_images.py
+      --input_bucket ${INPUT_BUCKET}
+      --output_bucket ${OUTPUT_BUCKET}
+      --annotation_set_bucket ${ANNOTATION_SET_BUCKET}
+      --images_prefix ${IMAGES_PREFIX}
+      --local_dir /app/images
+      --credentials_path /app/service_account.json
+      --threshold ${THRESHOLD}
+    shm_size: '32g'
