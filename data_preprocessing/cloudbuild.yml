@@ -1,22 +1,28 @@
 steps:
-# Change to the correct directory (if needed)
-- name: 'ubuntu'
-  args: ['bash', '-c', 'cd data_preprocessing || true']
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}',
+      '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest',
+      '-f', 'data-preprocessing/Dockerfile',
+      'data-preprocessing'
+    ]
 
-# Build the container image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}', '-f', 'data_preprocessing/Dockerfile', '.']
+  # Test the image
+  - name: 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}'
+    entrypoint: 'python'
+    args: ['-c', 'import cv2; import google.cloud.storage; print("Dependencies installed successfully")']
 
-# Push the container image to Artifact Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}']
+  # Push the container images to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest']
 
 images:
-- '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frame-extractor:${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest'
 
 options:
-  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
-
-substitutions:
-  _REGION: us-central1
-  _REPO_NAME: video-frame-extractor-repo
+  logging: CLOUD_LOGGING_ONLY
