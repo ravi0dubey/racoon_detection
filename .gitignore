@@ -8,7 +8,7 @@ dataset
 __pycache__/
 *.py[cod]
 *$py.class
-
+*service_account.json
 # C extensions
 *.so
 
