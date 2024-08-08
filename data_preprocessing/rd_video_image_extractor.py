@@ -5,16 +5,24 @@ import logging
 from google.cloud import storage
 from pathlib import Path
 import os
+import tempfile
 
 # Initialize logger
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+def get_storage_client():
+    """Gets the Google Cloud Storage client, using default credentials if service account json is not available."""
+    service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'service_account.json')
+    if os.path.exists(service_account_path):
+        return storage.Client.from_service_account_json(service_account_path)
+    else:
+        return storage.Client()
+
 def download_blob(bucket_name, source_blob_name, destination_file_name):
     """Downloads a blob from the bucket."""
     logger.debug(f"Downloading blob: bucket_name={bucket_name}, source_blob_name={source_blob_name}, destination_file_name={destination_file_name}")
-    service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'service_account.json')
-    storage_client = storage.Client.from_service_account_json(service_account_path)
+    storage_client = get_storage_client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(source_blob_name)
     blob.download_to_filename(destination_file_name)
@@ -23,29 +31,13 @@ def download_blob(bucket_name, source_blob_name, destination_file_name):
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
     """Uploads a file to the bucket."""
     logger.debug(f"Uploading blob: bucket_name={bucket_name}, source_file_name={source_file_name}, destination_blob_name={destination_blob_name}")
-    service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'service_account.json')
-    storage_client = storage.Client.from_service_account_json(service_account_path)
+    storage_client = get_storage_client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
     blob.upload_from_filename(source_file_name)
     logger.info(f"File {source_file_name} uploaded to {destination_blob_name}.")
 
 def extract_frames(video_file, output_dir, frame_rate, input_bucket=None, output_bucket=None):
-    """
-    Extract frames from a video file.
-
-    Args:
-        video_file (str): Path to the video file in GCS or local.
-        output_dir (str): Directory to save the extracted frames.
-        frame_rate (int): Rate at which frames should be extracted.
-        input_bucket (str, optional): GCS input bucket name.
-        output_bucket (str, optional): GCS output bucket name.
-
-    Returns:
-        tuple: (success (bool), message (str))
-            success: True if frames are successfully extracted, False otherwise.
-            message: Description of the result.
-    """
     try:
         logger.debug(f"Starting frame extraction: video_file={video_file}, output_dir={output_dir}, frame_rate={frame_rate}, input_bucket={input_bucket}, output_bucket={output_bucket}")
         local_video_path = video_file
@@ -67,17 +59,20 @@ def extract_frames(video_file, output_dir, frame_rate, input_bucket=None, output
 
         logger.debug(f"Video properties: total_frames={total_frames}, fps={fps}, interval={interval}")
 
-        while success:
-            if frame_count % interval == 0:
-                output_filename = f"{Path(video_file).stem}_{image_count+1:03d}.jpg"
-                local_output_path = os.path.join(output_dir, output_filename)
-                cv2.imwrite(local_output_path, image)
-                logger.debug(f"Saved frame: {local_output_path}")
-                if output_bucket:
-                    upload_blob(output_bucket, local_output_path, os.path.join(output_dir, output_filename))
-                image_count += 1
-            success, image = cap.read()
-            frame_count += 1
+        with tempfile.TemporaryDirectory() as temp_dir:
+            while success:
+                if frame_count % interval == 0:
+                    output_filename = f"{Path(video_file).stem}_{image_count+1:05d}.jpg"
+                    local_output_path = os.path.join(temp_dir, output_filename)
+                    cv2.imwrite(local_output_path, image)
+                    logger.debug(f"Saved frame: {local_output_path}")
+                    if output_bucket:
+                        upload_blob(output_bucket, local_output_path, os.path.join(output_dir, output_filename))
+                    else:
+                        os.rename(local_output_path, os.path.join(output_dir, output_filename))
+                    image_count += 1
+                success, image = cap.read()
+                frame_count += 1
 
         cap.release()
         if input_bucket:
@@ -107,30 +102,20 @@ def process_video(video_file, output_dir, frame_rate, input_bucket=None, output_
     else:
         logger.error(f"Processed {filename}: {message}")
 
-def main(input_path, output_path, frame_rate):
-    """
-    Main function to process all video files in the specified directory or GCS bucket.
-
-    Args:
-        input_path (str): Local directory or GCS bucket containing video files.
-        output_path (str): Local directory or GCS bucket to save the extracted frames.
-        frame_rate (int): Rate at which frames should be extracted.
-    """
-    logger.debug(f"Starting main: input_path={input_path}, output_path={output_path}, frame_rate={frame_rate}")
+def main(input_source, output_path, frame_rate):
+    logger.info(f"Received arguments: input_source={input_source}, output_path={output_path}, frame_rate={frame_rate}")
+    
     input_bucket = None
     output_bucket = None
-    if input_path.startswith("gs://"):
-        input_bucket = input_path[5:].split('/')[0]
-        input_prefix = '/'.join(input_path[5:].split('/')[1:])
-        storage_client = storage.Client.from_service_account_json('service_account.json')
+    
+    if input_source.startswith("gs://"):
+        input_bucket = input_source[5:].split('/')[0]
+        input_prefix = '/'.join(input_source[5:].split('/')[1:])
+        storage_client = get_storage_client()
         blobs = storage_client.list_blobs(input_bucket, prefix=input_prefix)
-        video_files = [blob.name for blob in blobs if blob.name.endswith(('.mp4', '.avi', '.mov', '.mkv'))]
+        video_files = [blob.name for blob in blobs if blob.name.lower().endswith(('.mp4', '.avi', '.mov', '.mkv'))]
     else:
-        input_prefix = input_path
-        video_files = list(Path(input_path).glob('**/*.mp4')) + \
-                      list(Path(input_path).glob('**/*.avi')) + \
-                      list(Path(input_path).glob('**/*.mov')) + \
-                      list(Path(input_path).glob('**/*.mkv'))
+        video_files = [str(f) for f in Path(input_source).glob('**/*') if f.suffix.lower() in ('.mp4', '.avi', '.mov', '.mkv')]
 
     if output_path.startswith("gs://"):
         output_bucket = output_path[5:].split('/')[0]
@@ -145,9 +130,12 @@ def main(input_path, output_path, frame_rate):
         pool.starmap(process_video, [(video, output_prefix, frame_rate, input_bucket, output_bucket) for video in video_files])
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input_path", type=str, help="Local directory or GCS bucket containing video files")
-    parser.add_argument("output_path", type=str, help="Local directory or GCS bucket to save extracted frames")
-    parser.add_argument("--frame_rate", type=int, default=1, help="Frame extraction rate (frames per second)")
-    args = parser.parse_args()
-    main(args.input_path, args.output_path, args.frame_rate)
+    input_source = os.environ.get('INPUT_SOURCE')
+    output_path = os.environ.get('OUTPUT_PATH')
+    frame_rate = int(os.environ.get('FRAME_RATE', 1))
+    
+    if not input_source or not output_path:
+        logger.error("INPUT_SOURCE and OUTPUT_PATH must be set in the environment variables.")
+        exit(1)
+    
+    main(input_source, output_path, frame_rate)

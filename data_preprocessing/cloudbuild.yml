@@ -1,0 +1,28 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}',
+      '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest',
+      '-f', 'data_preprocessing/Dockerfile',
+      'data_preprocessing'
+    ]
+
+  # Test the image
+  - name: 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}'
+    entrypoint: 'python'
+    args: ['-c', 'import cv2; import google.cloud.storage; print("Dependencies installed successfully")']
+
+  # Push the container images to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest']
+
+images:
+  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/video-frame-extractor-repo/video-frame-extractor:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

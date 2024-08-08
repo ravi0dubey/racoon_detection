@@ -1,11 +1,14 @@
 *.code-workspace
 racoonenv/
 dataset
+*queries*
+*.jpg
+*.zip
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
+*service_account.json
 # C extensions
 *.so
 

@@ -1,10 +1,12 @@
 version: '3.8'
-
 services:
-  rd_video_image_extractor:
+  video_processor:
     build: .
     volumes:
-      - .\service_account.json:/app/service_account.json:ro
+      - ./service_account.json:/app/service_account.json
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service_account.json
-    command: ["python", "rd_video_image_extractor.py", "gs://01-raw_dataset-4v6cnheu", "gs://02-extracted-images-4v6cnheu", "--frame_rate", "1"]
+      - INPUT_SOURCE=${INPUT_SOURCE}
+      - OUTPUT_PATH=${OUTPUT_PATH}
+      - FRAME_RATE=${FRAME_RATE:-1}
+    command: ["python", "rd_video_image_extractor.py"]
