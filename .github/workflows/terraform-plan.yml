@@ -35,5 +35,5 @@ jobs:
       working-directory: terraform
 
     - name: Terraform Plan
-      run: terraform plan -auto-approve
+      run: terraform plan
       working-directory: terraform
