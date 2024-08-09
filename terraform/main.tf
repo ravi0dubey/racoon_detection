@@ -39,7 +39,7 @@ resource "google_compute_network" "vpc_network" {
 # Storage Buckets (applying the lifecycle pattern)
 resource "google_storage_bucket" "raw_dataset" {
   name          = "01-raw_dataset-${random_string.bucket_suffix.result}"
-  location      = "	us-central1"
+  location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
 
@@ -54,7 +54,7 @@ resource "google_storage_bucket" "raw_dataset" {
 
 resource "google_storage_bucket" "extracted_images" {
   name          = "02-extracted-images-${random_string.bucket_suffix.result}"
-  location      = "	us-central1"
+  location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
 
@@ -69,7 +69,7 @@ resource "google_storage_bucket" "extracted_images" {
 
 resource "google_storage_bucket" "dedup_images" {
   name          = "03-dedup-images-${random_string.bucket_suffix.result}"
-  location      = "	us-central1"
+  location      = "us-central1"
   force_destroy = true
   uniform_bucket_level_access = true
 
