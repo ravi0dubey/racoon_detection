@@ -81,17 +81,18 @@ resource "google_storage_bucket" "dedup_images" {
     enabled = true
   }
 }
-# resource "google_storage_bucket" "extracted_images" {
-#   name          = "02-cloud-build-log-bucketd-images-${random_string.bucket_suffix.result}"
-#   location      = "us-east1"
-#   force_destroy = true
-#   uniform_bucket_level_access = true
 
-#   lifecycle {
-#     ignore_changes = [name]
-#   }
+resource "google_storage_bucket" "annotated_images" {
+  name          = "04_cvat_annotations-${random_string.bucket_suffix.result}"
+  location      = "us-central1"
+  force_destroy = true
+  uniform_bucket_level_access = true
 
-#   versioning {
-#     enabled = true
-#   }
-# }
+  lifecycle {
+    ignore_changes = [name]
+  }
+
+  versioning {
+    enabled = true
+  }
+}
