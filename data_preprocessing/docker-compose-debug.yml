@@ -3,10 +3,15 @@ services:
   video_processor:
     build: .
     volumes:
-      - ./service_account.json:/app/service_account.json
+      - ./:/app  # Mount the current directory to /app in the container
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service_account.json
       - INPUT_SOURCE=${INPUT_SOURCE}
       - OUTPUT_PATH=${OUTPUT_PATH}
       - FRAME_RATE=${FRAME_RATE:-1}
-    command: ["python", "rd_video_image_extractor.py"]
+    entrypoint: []
+    command: ["/bin/bash"]  # Start with bash instead of running the Python script
+    tty: true  # Allocate a pseudo-TTY
+    stdin_open: true  # Keep STDIN open
+
+
