@@ -26,33 +26,3 @@ images:
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
-
-steps:
-  # Build the Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [
-      'build',
-      '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/voxel_51_image_dedup:${SHORT_SHA}',
-      '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/voxel_51_image_dedup:latest',
-      '-f', 'Dockerfile',
-      '.'
-    ]
-
-  # Push the Docker image to Google Artifact Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [
-      'push',
-      'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/voxel_51_image_dedup:${SHORT_SHA}'
-    ]
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [
-      'push',
-      'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/voxel_51_image_dedup:latest'
-    ]
-
-images:
-  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/voxel_51_image_dedup:${SHORT_SHA}'
-  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/voxel_51_image_dedup:latest'
-
