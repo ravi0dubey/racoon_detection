@@ -96,3 +96,18 @@ resource "google_storage_bucket" "annotated_images" {
     enabled = true
   }
 }
+
+resource "google_storage_bucket" "annotated_images_additional" {
+  name          = "05_cvat_annotations1-${random_string.bucket_suffix.result}"
+  location      = "us-central1"
+  force_destroy = true
+  uniform_bucket_level_access = true
+
+  lifecycle {
+    ignore_changes = [name]
+  }
+
+  versioning {
+    enabled = true
+  }
+}
