@@ -9,6 +9,8 @@ services:
       - INPUT_SOURCE=${INPUT_SOURCE}
       - OUTPUT_PATH=${OUTPUT_PATH}
       - FRAME_RATE=${FRAME_RATE:-1}
+      - USER=${USER:-Ravi}
+      - LOCAL_DRIVE =$(LOCAL_DRIVE)
     entrypoint: []
     command: ["/bin/bash"]  # Start with bash instead of running the Python script
     tty: true  # Allocate a pseudo-TTY

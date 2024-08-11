@@ -9,4 +9,6 @@ services:
       - INPUT_SOURCE=${INPUT_SOURCE}
       - OUTPUT_PATH=${OUTPUT_PATH}
       - FRAME_RATE=${FRAME_RATE:-1}
+      - USER=${USER:-Ravi}
+      - LOCAL_DRIVE =$(LOCAL_DRIVE)
     command: ["python", "rd_video_image_extractor.py"]
