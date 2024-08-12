@@ -9,14 +9,14 @@ steps:
       'data_preprocessing/eh_unique_frame_extraction'
     ]
 
-  # Test the image
-  - name: 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/unique-frame-extractor:${SHORT_SHA}'
-    entrypoint: 'python'
-    args: ['-c', 'import cv2; import google.cloud.storage; print("Dependencies installed successfully")']
+  # Test the image (Optional)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['run', '--rm', 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/unique-frame-extractor:${SHORT_SHA}', 'python', '-c', 'import cv2; import google.cloud.storage; print("Dependencies installed successfully")']
 
   # Push the container images to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/unique-frame-extractor:${SHORT_SHA}']
+  
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/unique-frame-extractor-repo/unique-frame-extractor:latest']
 

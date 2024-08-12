@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: voxel_51_image_dedup:latest
+    image: unique-frame-extractor:latest
     ports:
       - "5151:5151"
     volumes:

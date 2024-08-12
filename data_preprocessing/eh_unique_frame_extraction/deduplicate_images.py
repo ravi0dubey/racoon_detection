@@ -211,17 +211,31 @@ def main(input_bucket, output_bucket, annotation_set_bucket, images_prefix, loca
 
     gcs_handler.upload_images(dataset_creator.dataset)
 
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(description="Download images from GCS and create a FiftyOne dataset.")
+#     parser.add_argument("--input_bucket", type=str, default="02-extracted-images-4v6cnheu", help="Input Google Cloud Storage bucket name")
+#     parser.add_argument("--output_bucket", type=str, default="03-dedup-images-4v6cnheu", help="Output Google Cloud Storage bucket name")
+#     parser.add_argument("--annotation_set_bucket", type=str, default="04_cvat_annotations_4v6cnheu", help="Annotation set Google Cloud Storage bucket name")
+#     parser.add_argument("--images_prefix", type=str, default="", help="Prefix to filter images in the bucket")
+#     parser.add_argument("--local_dir", type=str, default="/app/images", help="Local directory to store downloaded images")
+#     parser.add_argument("--credentials_path", type=str, default="/app/service_account.json", help="Path to the service account credentials")
+#     # parser.add_argument("--local_dir", type=str, default="D:\\Mentoring_Project\\racoon_project\\data_preprocessing\\eh_unique_frame_extraction\\images", help="Local directory to store downloaded images")
+#     # parser.add_argument("--credentials_path", type=str, default="D:\\Mentoring_Project\\racoon_project\\data_preprocessing\\eh_unique_frame_extraction\\service_account.json", help="Path to the service account credentials")
+#     parser.add_argument("--threshold", type=float, default=0.3, help="Threshold for finding approximate duplicates")
+
+#     args = parser.parse_args()
+
+#     main(args.input_bucket, args.output_bucket, args.annotation_set_bucket, args.images_prefix, args.local_dir, args.credentials_path, args.threshold)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download images from GCS and create a FiftyOne dataset.")
-    parser.add_argument("--input_bucket", type=str, default="02-extracted-images-4v6cnheu", help="Input Google Cloud Storage bucket name")
-    parser.add_argument("--output_bucket", type=str, default="03-dedup-images-4v6cnheu", help="Output Google Cloud Storage bucket name")
-    parser.add_argument("--annotation_set_bucket", type=str, default="04_cvat_annotations_4v6cnheu", help="Annotation set Google Cloud Storage bucket name")
-    parser.add_argument("--images_prefix", type=str, default="", help="Prefix to filter images in the bucket")
-    parser.add_argument("--local_dir", type=str, default="/app/images", help="Local directory to store downloaded images")
-    parser.add_argument("--credentials_path", type=str, default="/app/service_account.json", help="Path to the service account credentials")
-    # parser.add_argument("--local_dir", type=str, default="D:\\Mentoring_Project\\racoon_project\\data_preprocessing\\eh_unique_frame_extraction\\images", help="Local directory to store downloaded images")
-    # parser.add_argument("--credentials_path", type=str, default="D:\\Mentoring_Project\\racoon_project\\data_preprocessing\\eh_unique_frame_extraction\\service_account.json", help="Path to the service account credentials")
-    parser.add_argument("--threshold", type=float, default=0.3, help="Threshold for finding approximate duplicates")
+    parser.add_argument("--input_bucket", type=str, default=os.getenv("INPUT_BUCKET", ""), help="Input Google Cloud Storage bucket name")
+    parser.add_argument("--output_bucket", type=str, default=os.getenv("OUTPUT_BUCKET", ""), help="Output Google Cloud Storage bucket name")
+    parser.add_argument("--annotation_set_bucket", type=str, default=os.getenv("ANNOTATION_SET_BUCKET", ""), help="Annotation set Google Cloud Storage bucket name")
+    parser.add_argument("--images_prefix", type=str, default=os.getenv("IMAGES_PREFIX", ""), help="Prefix to filter images in the bucket")
+    parser.add_argument("--local_dir", type=str, default=os.getenv("LOCAL_DIR", "/app/images"), help="Local directory to store downloaded images")
+    parser.add_argument("--credentials_path", type=str, default=os.getenv("CREDENTIALS_PATH", "/app/service_account.json"), help="Path to the service account credentials")
+    parser.add_argument("--threshold", type=float, default=float(os.getenv("THRESHOLD", 0.3)), help="Threshold for finding approximate duplicates")
 
     args = parser.parse_args()
 
