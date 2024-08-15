@@ -1,0 +1,4 @@
+[submodule "cvat"]
+	path = cvat
+	url = https://github.com/cvat-ai/cvat
+	branch = develop
