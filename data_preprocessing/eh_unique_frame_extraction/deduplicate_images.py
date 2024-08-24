@@ -7,40 +7,72 @@ import argparse
 import sys
 from approx_dups import find_approximate_duplicates, deduplicate_approximate_duplicates
 
+def print_environment_variables():
+    print("INPUT_BUCKET:", os.getenv('INPUT_BUCKET'))
+    print("OUTPUT_BUCKET:", os.getenv('OUTPUT_BUCKET'))
+    print("ANNOTATION_SET_BUCKET:", os.getenv('ANNOTATION_SET_BUCKET'))
+    print("IMAGES_PREFIX:", os.getenv('IMAGES_PREFIX'))
+    print("LOCAL_DIR:", os.getenv('LOCAL_DIR'))
+    print("CREDENTIALS_PATH:", os.getenv('CREDENTIALS_PATH'))
+    print("THRESHOLD:", os.getenv('THRESHOLD'))
+
+# Print environment variables at the start
+print_environment_variables()
+
 class GCSImageHandler:
     """
     Class to handle downloading images from Google Cloud Storage, creating a FiftyOne dataset,
     and uploading results back to Google Cloud Storage.
     """
 
-    def __init__(self, input_bucket, output_bucket, annotation_set_bucket, images_prefix, local_dir, credentials_path):
-        """
-        Initializes the handler with GCS bucket details and local storage path.
+    # def __init__(self, input_bucket, output_bucket, annotation_set_bucket, images_prefix, local_dir, credentials_path):
+    #     """
+    #     Initializes the handler with GCS bucket details and local storage path.
         
-        :param input_bucket: Name of the GCS input bucket.
-        :param output_bucket: Name of the GCS output bucket.
-        :param annotation_set_bucket: Name of the GCS annotation set bucket.
-        :param images_prefix: Prefix to filter images in the input bucket.
-        :param local_dir: Local directory to store downloaded images.
-        :param credentials_path: Path to the service account credentials.
-        """
-        self.input_bucket_name = input_bucket
-        self.output_bucket_name = output_bucket
-        self.annotation_set_bucket_name = annotation_set_bucket
+    #     :param input_bucket: Name of the GCS input bucket.
+    #     :param output_bucket: Name of the GCS output bucket.
+    #     :param annotation_set_bucket: Name of the GCS annotation set bucket.
+    #     :param images_prefix: Prefix to filter images in the input bucket.
+    #     :param local_dir: Local directory to store downloaded images.
+    #     :param credentials_path: Path to the service account credentials.
+    #     """
+    #     self.input_bucket_name = input_bucket
+    #     self.output_bucket_name = output_bucket
+    #     self.annotation_set_bucket_name = annotation_set_bucket
+    #     self.images_prefix = images_prefix
+    #     self.local_dir = local_dir
+    #     # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+    #     service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', credentials_path)
+    #     if os.path.exists(service_account_path):
+    #         self.client = storage.Client.from_service_account_json(service_account_path)
+    #     else:
+    #         self.client = storage.Client()
+
+    #     self.input_bucket = self.client.get_bucket(self.input_bucket_name)
+    #     self.output_bucket = self.client.get_bucket(self.output_bucket_name)
+    #     self.annotation_set_bucket = self.client.get_bucket(self.annotation_set_bucket_name)
+    #     os.makedirs(self.local_dir, exist_ok=True)
+
+    def __init__(self, input_bucket_name, output_bucket_name, annotation_set_bucket_name, images_prefix, local_dir, credentials_path):
+        self.input_bucket_name = input_bucket_name
+        self.output_bucket_name = output_bucket_name
+        self.annotation_set_bucket_name = annotation_set_bucket_name
         self.images_prefix = images_prefix
         self.local_dir = local_dir
-        # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-        service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', credentials_path)
-        if os.path.exists(service_account_path):
-            self.client = storage.Client.from_service_account_json(service_account_path)
-        else:
-            self.client = storage.Client()
+        self.credentials_path = credentials_path
+        
+        # Initialize Google Cloud Storage client
+        self.client = storage.Client.from_service_account_json(self.credentials_path)
 
+        # Ensure bucket names are correctly used
         self.input_bucket = self.client.get_bucket(self.input_bucket_name)
+        print(f"self.input_bucket: {self.input_bucket}")
         self.output_bucket = self.client.get_bucket(self.output_bucket_name)
+        print(f"self.output_bucket: {self.output_bucket}")
         self.annotation_set_bucket = self.client.get_bucket(self.annotation_set_bucket_name)
+        print(f"self.annotation_set_bucket: {self.annotation_set_bucket}")
         os.makedirs(self.local_dir, exist_ok=True)
-
+    
     def download_images(self):
         """
         Downloads images containing '_capture_' from the specified GCS bucket to the local directory.
@@ -240,7 +272,18 @@ if __name__ == "__main__":
     parser.add_argument("--local_dir", type=str, default=os.getenv("LOCAL_DIR", "/app/images"), help="Local directory to store downloaded images")
     parser.add_argument("--credentials_path", type=str, default=os.getenv("CREDENTIALS_PATH", "/app/service_account.json"), help="Path to the service account credentials")
     parser.add_argument("--threshold", type=float, default=float(os.getenv("THRESHOLD", 0.3)), help="Threshold for finding approximate duplicates")
-
     args = parser.parse_args()
-
     main(args.input_bucket, args.output_bucket, args.annotation_set_bucket, args.images_prefix, args.local_dir, args.credentials_path, args.threshold)
+
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('--input-bucket', required=True)
+#     parser.add_argument('--output-bucket', required=True)
+#     parser.add_argument('--annotation-set-bucket', required=True)
+#     parser.add_argument('--images-prefix', default='')
+#     parser.add_argument('--local-dir', required=True)
+#     parser.add_argument('--credentials-path', required=True)
+#     parser.add_argument('--threshold', type=float, required=True)
+#     args = parser.parse_args()
+
+#     main(args.input_bucket, args.output_bucket, args.annotation_set_bucket, args.images_prefix, args.local_dir, args.credentials_path, args.threshold)
