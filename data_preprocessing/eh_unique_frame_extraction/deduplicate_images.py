@@ -29,7 +29,12 @@ class GCSImageHandler:
         self.annotation_set_bucket_name = annotation_set_bucket
         self.images_prefix = images_prefix
         self.local_dir = local_dir
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', credentials_path)
+        if os.path.exists(service_account_path):
+            storage.Client.from_service_account_json(service_account_path)
+        else:
+            storage.Client()
 
         self.client = storage.Client()
         self.input_bucket = self.client.get_bucket(self.input_bucket_name)
