@@ -60,9 +60,14 @@ class GCSImageHandler:
         self.images_prefix = images_prefix
         self.local_dir = local_dir
         self.credentials_path = credentials_path
-        
-        # Initialize Google Cloud Storage client
-        self.client = storage.Client.from_service_account_json(self.credentials_path)
+        service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', credentials_path)
+        if os.path.exists(service_account_path):
+            self.client = storage.Client.from_service_account_json(service_account_path)
+        else:
+            self.client = storage.Client()
+
+        # # Initialize Google Cloud Storage client
+        # self.client = storage.Client.from_service_account_json(self.credentials_path)
 
         # Ensure bucket names are correctly used
         self.input_bucket = self.client.get_bucket(self.input_bucket_name)
