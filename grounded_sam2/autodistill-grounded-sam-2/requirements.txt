@@ -1,0 +1,10 @@
+autodistill==0.1.28
+autodistill-florence-2==0.1.1
+autodistill-yolov8==0.1.4
+numpy==1.26.4
+opencv-python==4.10.0.84
+opencv-python-headless==4.10.0.84
+pytest==8.3.2
+roboflow==1.1.40
+samv2==0.0.4
+supervision==0.22.0
