@@ -112,10 +112,10 @@ def plot_results(image, mask, annotated_image):
 
 def main():
     # Initialize the model with the "racoon" prompt
-    model = initialize_model("tree")
+    model = initialize_model("racoon")
 
     # Process a single image
-    image_path = "/content/raccoon-1.jpg"
+    image_path = "/content/raccoon-25.jpg"
     image, mask, annotated_image = process_image(model, image_path)
 
     # Plot the results
