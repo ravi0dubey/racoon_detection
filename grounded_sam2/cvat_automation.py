@@ -7,7 +7,23 @@ Original file is located at
     https://colab.research.google.com/drive/1NDBodJmAeUVX-qrAVCgsYLaEThD9gBLc
 """
 
+gpu_info = !nvidia-smi
+gpu_info = '\n'.join(gpu_info)
+if gpu_info.find('failed') >= 0:
+  print('Not connected to a GPU')
+else:
+  print(gpu_info)
+
+gpu_info = !nvidia-smi
+gpu_info = '\n'.join(gpu_info)
+if gpu_info.find('failed') >= 0:
+  print('Not connected to a GPU')
+else:
+  print(gpu_info)
+
 !pip install -r requirements.txt
+
+!pip install google-cloud-storage
 
 !git clone https://github.com/autodistill/autodistill-grounded-sam-2
 
@@ -21,10 +37,21 @@ from autodistill_grounded_sam_2 import GroundedSAM2
 from autodistill.detection import CaptionOntology
 from autodistill.utils import plot
 
+from google.colab import auth
+auth.authenticate_user()
+
+from google.cloud import storage
+from PIL import Image
+import io
+import matplotlib.pyplot as plt
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 import logging
+import cv2
+import tempfile
+import os
+
+# Below code is to perform segmentation of racoon image
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -115,12 +142,190 @@ def main():
     model = initialize_model("racoon")
 
     # Process a single image
-    image_path = "/content/raccoon-25.jpg"
+    image_path = "/content/001_racoon_1_000001.jpg"
     image, mask, annotated_image = process_image(model, image_path)
 
     # Plot the results
     plot_results(image, mask, annotated_image)
 
 logging.info("Starting the application")
+  main()
+  logging.info("Application completed")
+
+# from google.colab import auth
+# auth.authenticate_user()
+
+# from google.colab import files
+# uploaded = files.upload()  # Upload your JSON key file here
+
+# import os
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'service_account.json'
+
+# from google.cloud import storage
+
+# # Set the project ID explicitly
+# project_id = 'racoon-detection-427421'
+# client = storage.Client(project=project_id)
+
+import logging
+import cv2
+import numpy as np
+import tempfile
+import os
+from google.cloud import storage
+import torch
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def initialize_model(prompt):
+    """
+    Initialize the GroundedSAM2 model with the given prompt.
+
+    Args:
+        prompt (str): Prompt for the model.
+
+    Returns:
+        GroundedSAM2: Initialized model instance.
+    """
+    logging.info(f"Initializing GroundedSAM2 model with prompt: {prompt}")
+    prompt_dict = {prompt: prompt}
+    model = GroundedSAM2(
+        ontology=CaptionOntology(prompt_dict)
+    )
+    logging.info("Model initialized successfully.")
+    return model
+
+def process_image(model, image):
+    """
+    Process an image file with the GroundedSAM2 model.
+
+    Args:
+        model (GroundedSAM2): Initialized model instance.
+        image (numpy.ndarray): Image data.
+
+    Returns:
+        tuple: Segmentation mask and annotated image.
+    """
+    logging.info("Processing image")
+
+    # Save image to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
+        cv2.imwrite(temp_file.name, image)
+        temp_file_path = temp_file.name
+
+    # Use the file path with the model
+    results = model.predict(temp_file_path)
+    logging.info(f"Prediction results: {results}")
+
+    # Create segmentation mask
+    mask = np.zeros(image.shape[:2], dtype=np.uint8)
+    if isinstance(results.mask, np.ndarray):
+        mask = results.mask.squeeze().astype(np.uint8) * 255
+
+    # Create annotated image
+    annotated_image = plot(
+        image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
+        classes=model.ontology.classes(),
+        detections=results,
+        raw=True
+    )
+
+    # Resize images if they exceed the maximum allowed size
+    def resize_if_needed(img, max_size):
+        h, w = img.shape[:2]
+        if max(h, w) > max_size:
+            scale = max_size / max(h, w)
+            new_size = (int(w * scale), int(h * scale))
+            return cv2.resize(img, new_size, interpolation=cv2.INTER_LINEAR)
+        return img
+
+    max_dimension = 65500
+    mask = resize_if_needed(mask, max_dimension)
+    annotated_image = resize_if_needed(annotated_image, max_dimension)
+
+    # Clean up the temporary file
+    os.remove(temp_file_path)
+
+    return mask, annotated_image
+
+def upload_to_bucket(bucket_name, destination_blob_name, content):
+    """
+    Upload content to a Google Cloud Storage bucket.
+
+    Args:
+        bucket_name (str): The name of the bucket.
+        destination_blob_name (str): The destination path in the bucket.
+        content (bytes): The content to upload.
+    """
+    try:
+        client = storage.Client()
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob(destination_blob_name)
+        blob.upload_from_string(content, content_type='image/jpeg')
+        logging.info(f"Uploaded {destination_blob_name} to bucket {bucket_name}")
+    except Exception as e:
+        logging.error(f"Failed to upload {destination_blob_name} to bucket {bucket_name}: {e}")
+
+def main():
+    # Authenticate if running in Google Colab
+    from google.colab import auth
+    auth.authenticate_user()
+
+    # Initialize the model with the "racoon" prompt
+    model = initialize_model("racoon")
+
+    # Set PyTorch memory management
+    torch.cuda.empty_cache()
+    torch.cuda.set_per_process_memory_fraction(0.5, 0)
+
+    # Google Cloud Storage bucket names
+    # source_bucket_name = '04_cvat_annotations-4v6cnheu'
+    source_bucket_name ='06_annotation_input'
+    destination_bucket_name = '05_cvat_annotations1-4v6cnheu'
+
+    # Initialize Google Cloud Storage client
+    client = storage.Client()
+
+    # Access source bucket
+    source_bucket = client.get_bucket(source_bucket_name)
+
+    # List all blobs (files) in the source bucket
+    blobs = list(source_bucket.list_blobs())
+
+    for blob in blobs:
+        if blob.name.lower().endswith(('.png', '.jpg', '.jpeg')):
+            logging.info(f"Processing file: {blob.name}")
+
+            try:
+                # Download the image
+                image_data = blob.download_as_bytes()
+                image = cv2.imdecode(np.frombuffer(image_data, np.uint8), cv2.IMREAD_COLOR)
+
+                # Process the image
+                mask, annotated_image = process_image(model, image)
+
+                try:
+                    # Save segmentation mask and annotated image to in-memory buffer
+                    _, mask_encoded = cv2.imencode('.jpg', mask)
+                    mask_bytes = mask_encoded.tobytes()
+
+                    _, annotated_image_encoded = cv2.imencode('.jpg', annotated_image)
+                    annotated_image_bytes = annotated_image_encoded.tobytes()
+
+                    # Upload the segmented output to the destination bucket
+                    upload_to_bucket(destination_bucket_name, f"segmented_{blob.name}", mask_bytes)
+                    upload_to_bucket(destination_bucket_name, f"annotated_{blob.name}", annotated_image_bytes)
+
+                except Exception as e:
+                    logging.error(f"Error processing image {blob.name}: {e}")
+
+                # Clear GPU cache after processing each image
+                torch.cuda.empty_cache()
+
+            except Exception as e:
+                logging.error(f"Failed to process image {blob.name}: {e}")
+
+logging.info("Starting the application to perform segmentation of images stored in a bucket")
   main()
   logging.info("Application completed")
