@@ -1,4 +1,3 @@
-[submodule "cvat"]
-	path = cvat
-	url = https://github.com/cvat-ai/cvat
-	branch = develop
+[submodule "racoon_training/yolov8"]
+	path = racoon_training/yolov8
+	url = https://github.com/ultralytics/ultralytics.git

@@ -1,4 +1,5 @@
 *.code-workspace
+*/rdatavenv/*
 racoonenv/
 dataset
 *queries*
