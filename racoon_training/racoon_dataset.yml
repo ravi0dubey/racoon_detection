@@ -1,0 +1,7 @@
+path: /home/ravi/racoon_detection/racoon_training/racoon_training_dataset # dataset root dir
+train: train/images # train images (relative to 'path') 4 images
+val: valid/images # val images (relative to 'path') 4 images
+test: test/images # val images (relative to 'path') 4 images test images (optional)
+# Classes
+names:
+ 0: racoon

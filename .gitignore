@@ -13,7 +13,7 @@ __pycache__/
 *service_account.json
 # C extensions
 *.so
-
+*.pt
 # Distribution / packaging
 .Python
 build/
