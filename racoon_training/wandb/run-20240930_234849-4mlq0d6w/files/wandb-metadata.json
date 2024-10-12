@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-6.8.0-45-generic-x86_64-with-glibc2.35",
+  "python":  "3.10.14",
+  "startedAt":  "2024-09-30T23:48:49.175593Z",
+  "program":  "/ultralytics/workspace/racoon_segmentor_training.py",
+  "codePath":  "workspace/racoon_segmentor_training.py",
+  "git":  {
+    "remote":  "https://github.com/ultralytics/ultralytics",
+    "commit":  "0f8b0f2e3ab2516cecc63b158e02f13fd6909617"
+  },
+  "email":  "ravi0dubey@gmail.com",
+  "root":  "/ultralytics/workspace",
+  "host":  "ravi-dl",
+  "username":  "root",
+  "executable":  "/opt/conda/bin/python",
+  "codePathLocal":  "racoon_segmentor_training.py",
+  "cpu_count":  14,
+  "cpu_count_logical":  20,
+  "gpu":  "[]",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "2013991550976",
+      "used":  "320557080576"
+    }
+  },
+  "memory":  {
+    "total":  "67076362240"
+  },
+  "cpu":  {
+    "count":  14,
+    "countLogical":  20
+  },
+  "gpu_nvidia":  [
+    {
+      "memoryTotal":  "8589934592",
+      "cudaCores":  5888,
+      "architecture":  "Ampere"
+    }
+  ],
+  "cudaVersion":  "12.4"
+}

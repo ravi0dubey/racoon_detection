@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-6.8.0-45-generic-x86_64-with-glibc2.39",
+  "python":  "3.12.3",
+  "startedAt":  "2024-09-30T20:33:55.165775Z",
+  "program":  "/home/ravi/racoon_detection/racoon_training/racoon_segmentor_training.py",
+  "codePath":  "racoon_training/racoon_segmentor_training.py",
+  "git":  {
+    "remote":  "https://github.com/ravi0dubey/racoon_detection.git",
+    "commit":  "941ae6cc3bca69f2cf62ea7d657d9c653416b896"
+  },
+  "email":  "ravi0dubey@gmail.com",
+  "root":  "/home/ravi/racoon_detection/racoon_training",
+  "host":  "ravi-dl",
+  "username":  "ravi",
+  "executable":  "/home/ravi/racoon_detection/racoon_training/rdatavenv/bin/python",
+  "codePathLocal":  "racoon_segmentor_training.py",
+  "cpu_count":  14,
+  "cpu_count_logical":  20,
+  "gpu":  "[]",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "2013991550976",
+      "used":  "237133963264"
+    }
+  },
+  "memory":  {
+    "total":  "67076362240"
+  },
+  "cpu":  {
+    "count":  14,
+    "countLogical":  20
+  },
+  "gpu_nvidia":  [
+    {
+      "memoryTotal":  "8589934592",
+      "cudaCores":  5888,
+      "architecture":  "Ampere"
+    }
+  ],
+  "cudaVersion":  "12.4"
+}

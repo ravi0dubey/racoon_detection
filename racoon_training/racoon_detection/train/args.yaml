@@ -67,7 +67,7 @@ keras: false
 optimize: false
 int8: false
 dynamic: false
-simplify: false
+simplify: true
 opset: null
 workspace: 4
 nms: false
@@ -99,6 +99,7 @@ bgr: 0.0
 mosaic: 1.0
 mixup: 0.0
 copy_paste: 0.0
+copy_paste_mode: flip
 auto_augment: randaugment
 erasing: 0.4
 crop_fraction: 1.0

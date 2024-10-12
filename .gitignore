@@ -4,8 +4,12 @@ racoonenv/
 dataset
 *queries*
 *.jpg
+*.png
+*.0
 *.zip
 *.mp4
+*.txt
+*.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

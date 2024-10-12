@@ -1,0 +1,20 @@
+services:  
+  ultralytics:
+    image: ultralytics/ultralytics:latest
+    container_name: ultralytics-yolo
+    command: /bin/bash  # Keeps the container running and allows you to exec into it
+    stdin_open: true  # Keep STDIN open
+    tty: true  # Allocate a pseudo-TTY
+    volumes:
+      - ${PWD}:/ultralytics/workspace  # Mount current directory
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY:-d54ade7efca5cf00228abc5805f4f1eceb60f8b8}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    network_mode: host
+    ipc: host
