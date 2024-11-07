@@ -1,0 +1,20 @@
+wandb_version: 1
+
+batch:
+  value: 4
+dropout:
+  value: 0.1
+epochs:
+  value: 278
+erasing:
+  value: 0.2
+imgsz:
+  value: 640
+lr0:
+  value: 0.00015158525258103192
+optimizer:
+  value: SGD
+scale:
+  value: 0.5
+seed:
+  value: 1337

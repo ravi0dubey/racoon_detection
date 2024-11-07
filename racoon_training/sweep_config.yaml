@@ -1,0 +1,27 @@
+program: yolov8_wandb_sweep.py
+method: bayes
+metric:
+  name: metrics/mAP50(B)
+  goal: maximize
+parameters:
+  epochs:
+    min: 100
+    max: 300
+  imgsz:
+    values: [640]
+  batch:
+    values: [2,4,8]
+  optimizer:
+    values: ['SGD', 'Adam', 'AdamW']
+  seed:
+    values: [0, 42, 1337]
+  lr0:
+    distribution: log_uniform_values
+    min: 1e-5
+    max: 1e-1
+  dropout:
+    values: [0.0, 0.1, 0.2, 0.3]
+  scale:
+    values: [0.1, 0.2, 0.3, 0.4, 0.5]
+  erasing:
+    values: [0.1, 0.2, 0.3, 0.4, 0.5]

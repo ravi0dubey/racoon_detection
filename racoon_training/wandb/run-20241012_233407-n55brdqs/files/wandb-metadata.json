@@ -1,0 +1,158 @@
+{
+    "os": "Linux-6.8.0-45-generic-x86_64-with-glibc2.39",
+    "python": "3.11.9",
+    "heartbeatAt": "2024-10-13T03:34:07.394584",
+    "startedAt": "2024-10-13T03:34:07.105112",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--batch=4",
+        "--dropout=0.3",
+        "--epochs=110",
+        "--erasing=0.4",
+        "--imgsz=640",
+        "--lr0=9.93860979055998e-05",
+        "--optimizer=AdamW",
+        "--scale=0.2",
+        "--seed=42"
+    ],
+    "state": "running",
+    "program": "/home/ravi/racoon_detection/racoon_training/yolov8_wandb_sweep.py",
+    "codePathLocal": "yolov8_wandb_sweep.py",
+    "codePath": "racoon_training/yolov8_wandb_sweep.py",
+    "git": {
+        "remote": "https://github.com/ravi0dubey/racoon_detection.git",
+        "commit": "ab81406350dda98d9c6d94f622163826dff1627d"
+    },
+    "email": "ravi0dubey@gmail.com",
+    "root": "/home/ravi/racoon_detection",
+    "host": "ravi-dl",
+    "username": "ravi",
+    "executable": "/home/ravi/racoon_detection/racoon_training/eh_yolo_env/bin/python",
+    "cpu_count": 14,
+    "cpu_count_logical": 20,
+    "cpu_freq": {
+        "current": 1985.9402000000002,
+        "min": 400.0,
+        "max": 4180.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 503.652,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 4640.323,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 4400.0,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 587.865,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 4600.0
+        },
+        {
+            "current": 400.884,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3361.428,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 399.081,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 400.0,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3511.434,
+            "min": 400.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3470.353,
+            "min": 400.0,
+            "max": 3500.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 1875.675796508789,
+            "used": 483.50090408325195
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3070 Ti Laptop GPU",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3070 Ti Laptop GPU",
+            "memory_total": 8589934592
+        }
+    ],
+    "memory": {
+        "total": 62.46974182128906
+    }
+}

@@ -141,26 +141,45 @@ def main(input_source, output_path, frame_rate,user,local_drive):
         print("inside pool")
         pool.starmap(process_video, [(video, output_prefix, frame_rate, input_bucket, output_bucket,local_drive) for video in video_files])
 
-if __name__ == "__main__":
-    input_source = os.environ.get('INPUT_SOURCE')
-    print(f"INPUT_SOURCE: {input_source}")
-    if input_source is None:
-        input_source = "gs://01-raw_dataset-4v6cnheu"
-        print(f"Using default INPUT_SOURCE: {input_source}")
+# if __name__ == "__main__":
+#     input_source = os.environ.get('INPUT_SOURCE')
+#     print(f"INPUT_SOURCE: {input_source}")
+#     if input_source is None:
+#         input_source = "gs://01-raw_dataset-4v6cnheu"
+#         print(f"Using default INPUT_SOURCE: {input_source}")
         
-    output_path = os.environ.get('OUTPUT_PATH')
-    if output_path is None:
-        output_path = "gs://02-extracted-images-4v6cnheu"
-        print(f"Using default output_path: {output_path}")
-    frame_rate = int(os.environ.get('FRAME_RATE', 1))
-    user = os.environ.get('USER',"Mogambo")
-    print(f"Using default user: {user}")
-    local_drive = os.environ.get('LOCAL_DRIVE')
-    # if local_drive is None:
-    #     local_drive = "D:/Mentoring_Project/racoon_project/data_preprocessing"
-    #     print(f"Using default local_drive: {local_drive}")
-    if not input_source or not output_path:
-        logger.error("INPUT_SOURCE and OUTPUT_PATH must be set in the environment variables.")
-        exit(1)
+#     output_path = os.environ.get('OUTPUT_PATH')
+#     if output_path is None:
+#         output_path = "gs://02-extracted-images-4v6cnheu"
+#         print(f"Using default output_path: {output_path}")
+#     frame_rate = int(os.environ.get('FRAME_RATE', 1))
+#     user = os.environ.get('USER',"Mogambo")
+#     print(f"Using default user: {user}")
+#     local_drive = os.environ.get('LOCAL_DRIVE')
+#     # if local_drive is None:
+#     #     local_drive = "D:/Mentoring_Project/racoon_project/data_preprocessing"
+#     #     print(f"Using default local_drive: {local_drive}")
+#     if not input_source or not output_path:
+#         logger.error("INPUT_SOURCE and OUTPUT_PATH must be set in the environment variables.")
+#         exit(1)
     
-    main(input_source, output_path, frame_rate,user,local_drive)
+#     main(input_source, output_path, frame_rate,user,local_drive)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input_source', type=str, default=os.environ.get('INPUT_SOURCE'))
+    parser.add_argument('--output_path', type=str, default=os.environ.get('OUTPUT_PATH'))
+    parser.add_argument('--frame_rate', type=int, default=int(os.environ.get('FRAME_RATE', 1)))
+
+    args = parser.parse_args()
+
+    input_source = args.input_source
+    output_path = args.output_path
+    frame_rate = args.frame_rate
+
+    if not input_source or not output_path:
+        logger.error("INPUT_SOURCE and OUTPUT_PATH must be provided either via command-line arguments or environment variables.")
+        exit(1)
+
+    main(input_source, output_path, frame_rate)
+

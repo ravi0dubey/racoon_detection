@@ -1,0 +1,9 @@
+services:
+  eh_voice_runner:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        - VERSION=${VERSION:-latest}
+    image: us-central1-docker.pkg.dev/eh-voice-ai/eh-voice-artifact-repo/eh_voice_runner:${VERSION:-latest}
+    container_name: eh_voice_runner
