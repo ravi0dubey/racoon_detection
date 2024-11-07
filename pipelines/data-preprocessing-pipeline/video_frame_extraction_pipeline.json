@@ -1,0 +1,94 @@
+{
+  "components": {
+    "comp-video-frame-extractor": {
+      "executorLabel": "exec-video-frame-extractor",
+      "inputDefinitions": {
+        "parameters": {
+          "frame_rate": {
+            "defaultValue": 1.0,
+            "isOptional": true,
+            "parameterType": "NUMBER_INTEGER"
+          },
+          "input_source": {
+            "parameterType": "STRING"
+          },
+          "output_path": {
+            "parameterType": "STRING"
+          }
+        }
+      }
+    }
+  },
+  "deploymentSpec": {
+    "executors": {
+      "exec-video-frame-extractor": {
+        "container": {
+          "args": [
+            "--input_source",
+            "{{$.inputs.parameters['input_source']}}",
+            "--output_path",
+            "{{$.inputs.parameters['output_path']}}",
+            "--frame_rate",
+            "{{$.inputs.parameters['frame_rate']}}"
+          ],
+          "command": [
+            "python",
+            "rd_video_image_extractor.py"
+          ],
+          "image": "us-central1-docker.pkg.dev/racoon-detection-427421/video-frame-extractor-repo/video-frame-extractor:latest"
+        }
+      }
+    }
+  },
+  "pipelineInfo": {
+    "description": "A pipeline that extracts frames from videos using a custom container.",
+    "name": "video-frame-extraction-pipeline"
+  },
+  "root": {
+    "dag": {
+      "tasks": {
+        "video-frame-extractor": {
+          "cachingOptions": {
+            "enableCache": true
+          },
+          "componentRef": {
+            "name": "comp-video-frame-extractor"
+          },
+          "inputs": {
+            "parameters": {
+              "frame_rate": {
+                "componentInputParameter": "frame_rate"
+              },
+              "input_source": {
+                "componentInputParameter": "input_source"
+              },
+              "output_path": {
+                "componentInputParameter": "output_path"
+              }
+            }
+          },
+          "taskInfo": {
+            "name": "video-frame-extractor"
+          }
+        }
+      }
+    },
+    "inputDefinitions": {
+      "parameters": {
+        "frame_rate": {
+          "defaultValue": 1.0,
+          "isOptional": true,
+          "parameterType": "NUMBER_INTEGER"
+        },
+        "input_source": {
+          "parameterType": "STRING"
+        },
+        "output_path": {
+          "parameterType": "STRING"
+        }
+      }
+    }
+  },
+  "schemaVersion": "2.1.0",
+  "sdkVersion": "kfp-2.7.0"
+}
