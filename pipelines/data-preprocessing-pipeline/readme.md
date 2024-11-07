@@ -31,15 +31,17 @@ gcloud config set project eh-ml-mentorship
 gcloud services enable aiplatform.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
 gcloud services enable storage.googleapis.com
-gcloud projects add-iam-policy-binding eh-ml-mentorship \
-  --member=serviceAccount:461769263335-compute@developer.gserviceaccount.com \
+
+gcloud projects add-iam-policy-binding racoon-detection-427421 \
+  --member=serviceAccount:297238540166-compute@developer.gserviceaccount.com \
   --role=roles/artifactregistry.reader
 
 gcloud artifacts repositories add-iam-policy-binding video-frame-extractor-repo \
 --location=us-central1 \
---member=297238540166-compute@developer.gserviceaccount.com\
+--member=serviceAccount:service-461769263335@gcp-sa-aiplatform-cc.iam.gserviceaccount.com \
 --role=roles/artifactregistry.reader \
 --condition=None
+
 
 python3 -m venv venv
 source venv/bin/activate
@@ -48,4 +50,5 @@ pip install kfp google-cloud-pipeline-components google-cloud-aiplatform
 python pipeline.py
 python submit_pipeline.py
 
+gcloud builds triggers run mentorship-cloudbuild-trigger --region=us-central1 --project=eh-ml-mentorship
 ```
