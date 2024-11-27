@@ -52,8 +52,7 @@ python pipeline.py
 python submit_pipeline.py
 
 gcloud builds triggers run rd-data-preprocessing-trigger --region=us-central1 --branch=main
-
-INPUT_SOURCE='gs://01-raw_dataset-lco7ubyy'
-OUTPUT_PATH='gs://00-temp-xser'
+INPUT_SOURCE='gs://01-raw_dataset-4v6cnheu'
+OUTPUT_PATH='gs://racoon-temp-bucket'
 FRAME_RATE=1
 ```

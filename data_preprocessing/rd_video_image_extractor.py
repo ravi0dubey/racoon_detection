@@ -108,7 +108,7 @@ def process_video(video_file, output_dir, frame_rate, input_bucket=None, output_
     else:
         logger.error(f"Processed {filename}: {message}")
 
-def main(input_source, output_path, frame_rate,local_drive = None):
+def main(input_source, output_path, frame_rate,user=None,local_drive = None):
     logger.info(f"Received arguments: input_source={input_source}, output_path={output_path}, frame_rate={frame_rate}")
     
     input_bucket = None
@@ -170,15 +170,27 @@ if __name__ == "__main__":
     parser.add_argument('--input_source', type=str, default=os.environ.get('INPUT_SOURCE'))
     parser.add_argument('--output_path', type=str, default=os.environ.get('OUTPUT_PATH'))
     parser.add_argument('--frame_rate', type=int, default=int(os.environ.get('FRAME_RATE', 1)))
-    # parser.add_argument('--user', type=str, default=os.environ.get('USER'))
-    # parser.add_argument('--local_drive', type=str, default=os.environ.get('LOCAL_DRIVE'))
+    parser.add_argument('--user', type=str, default=os.environ.get('USER'))
+    parser.add_argument('--local_drive', type=str, default=os.environ.get('LOCAL_DRIVE'))
     args = parser.parse_args()
     input_source = args.input_source
     output_path = args.output_path
     frame_rate = args.frame_rate
-    # user = args.user
-    # local_drive = args.local_drive
+    user = args.user
+    local_drive = args.local_drive
+    print(f"Using default user: {user}")
+    print(f"Using default local_drive: {local_drive}")
+    if user is None:
+        user = os.environ.get('USER',"Mogambo")   
+    local_drive = os.environ.get('LOCAL_DRIVE')
+    if local_drive is None:
+        local_drive = "D:/Mentoring_Project/racoon_project/data_preprocessing"
+    
+    print(f"INPUT_SOURCE: {input_source}")
+    print(f"Using default user: {user}")
+    print(f"Using default local_drive: {local_drive}")
     if not input_source or not output_path:
+        print("INPUT_SOURCE and OUTPUT_PATH must be provided either via command-line arguments or environment variables.")
         logger.error("INPUT_SOURCE and OUTPUT_PATH must be provided either via command-line arguments or environment variables.")
         exit(1)
-    main(input_source, output_path, frame_rate)
+    main(input_source, output_path, frame_rate,user,local_drive)
