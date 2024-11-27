@@ -37,16 +37,13 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
     blob.upload_from_filename(source_file_name)
     logger.info(f"File {source_file_name} uploaded to {destination_blob_name}.")
 
-def extract_frames(video_file, output_dir, frame_rate, input_bucket=None, output_bucket=None,local_drive = None):
+def extract_frames(video_file, output_dir, frame_rate, input_bucket=None, output_bucket=None):
     try:
         logger.debug(f"Starting frame extraction: video_file={video_file}, output_dir={output_dir}, frame_rate={frame_rate}, input_bucket={input_bucket}, output_bucket={output_bucket}")
         logger.info(f"Starting frame extraction: video_file={video_file}, output_dir={output_dir}, frame_rate={frame_rate}, input_bucket={input_bucket}, output_bucket={output_bucket}")
         local_video_path = video_file
         if input_bucket:
-            if local_drive is None:
-                local_video_path = os.path.join("/tmp", Path(video_file).name)
-            else:
-                local_video_path = os.path.join(local_drive, Path(video_file).name)
+            local_video_path = os.path.join("/tmp", Path(video_file).name)
             download_blob(input_bucket, video_file, local_video_path)
         
         print(f"local_video_path: {local_video_path}")
@@ -88,7 +85,7 @@ def extract_frames(video_file, output_dir, frame_rate, input_bucket=None, output
         logger.error(f"Error processing {video_file}: {str(e)}")
         return False, f"Error processing {video_file}: {str(e)}"
 
-def process_video(video_file, output_dir, frame_rate, input_bucket=None, output_bucket=None,local_drive = None):
+def process_video(video_file, output_dir, frame_rate, input_bucket=None, output_bucket=None):
     """
     Process a single video file by extracting frames and logging the result.
 
@@ -102,13 +99,13 @@ def process_video(video_file, output_dir, frame_rate, input_bucket=None, output_
     logger.debug(f"Processing video: video_file={video_file}, output_dir={output_dir}, frame_rate={frame_rate}, input_bucket={input_bucket}, output_bucket={output_bucket}")
     logger.info(f"Processing video: video_file={video_file}, output_dir={output_dir}, frame_rate={frame_rate}, input_bucket={input_bucket}, output_bucket={output_bucket}")
     filename = Path(video_file).name
-    result, message = extract_frames(video_file, output_dir, frame_rate, input_bucket, output_bucket,local_drive)
+    result, message = extract_frames(video_file, output_dir, frame_rate, input_bucket, output_bucket)
     if result:
         logger.info(f"Processed {filename}: {message}")
     else:
         logger.error(f"Processed {filename}: {message}")
 
-def main(input_source, output_path, frame_rate,user=None,local_drive = None):
+def main(input_source, output_path, frame_rate):
     logger.info(f"Received arguments: input_source={input_source}, output_path={output_path}, frame_rate={frame_rate}")
     
     input_bucket = None
@@ -139,7 +136,7 @@ def main(input_source, output_path, frame_rate,user=None,local_drive = None):
 
     with multiprocessing.Pool() as pool:
         print("inside pool")
-        pool.starmap(process_video, [(video, output_prefix, frame_rate, input_bucket, output_bucket,local_drive) for video in video_files])
+        pool.starmap(process_video, [(video, output_prefix, frame_rate, input_bucket, output_bucket) for video in video_files])
 
 # if __name__ == "__main__":
 #     input_source = os.environ.get('INPUT_SOURCE')
@@ -170,27 +167,14 @@ if __name__ == "__main__":
     parser.add_argument('--input_source', type=str, default=os.environ.get('INPUT_SOURCE'))
     parser.add_argument('--output_path', type=str, default=os.environ.get('OUTPUT_PATH'))
     parser.add_argument('--frame_rate', type=int, default=int(os.environ.get('FRAME_RATE', 1)))
-    parser.add_argument('--user', type=str, default=os.environ.get('USER'))
-    parser.add_argument('--local_drive', type=str, default=os.environ.get('LOCAL_DRIVE'))
+
     args = parser.parse_args()
     input_source = args.input_source
     output_path = args.output_path
     frame_rate = args.frame_rate
-    user = args.user
-    local_drive = args.local_drive
-    print(f"Using default user: {user}")
-    print(f"Using default local_drive: {local_drive}")
-    if user is None:
-        user = os.environ.get('USER',"Mogambo")   
-    local_drive = os.environ.get('LOCAL_DRIVE')
-    if local_drive is None:
-        local_drive = "D:/Mentoring_Project/racoon_project/data_preprocessing"
-    
     print(f"INPUT_SOURCE: {input_source}")
-    print(f"Using default user: {user}")
-    print(f"Using default local_drive: {local_drive}")
     if not input_source or not output_path:
         print("INPUT_SOURCE and OUTPUT_PATH must be provided either via command-line arguments or environment variables.")
         logger.error("INPUT_SOURCE and OUTPUT_PATH must be provided either via command-line arguments or environment variables.")
         exit(1)
-    main(input_source, output_path, frame_rate,user,local_drive)
+    main(input_source, output_path, frame_rate)
