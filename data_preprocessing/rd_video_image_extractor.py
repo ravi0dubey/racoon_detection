@@ -170,6 +170,9 @@ if __name__ == "__main__":
     parser.add_argument('--input_source', type=str, default=os.environ.get('INPUT_SOURCE'))
     parser.add_argument('--output_path', type=str, default=os.environ.get('OUTPUT_PATH'))
     parser.add_argument('--frame_rate', type=int, default=int(os.environ.get('FRAME_RATE', 1)))
+    parser.add_argument('--user', type=str, default=os.environ.get('INPUT_SOURCE'))
+    parser.add_argument('--local_drive', type=str, default=os.environ.get('OUTPUT_PATH'))
+
     args = parser.parse_args()
 
     input_source = args.input_source
