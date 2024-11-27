@@ -108,7 +108,7 @@ def process_video(video_file, output_dir, frame_rate, input_bucket=None, output_
     else:
         logger.error(f"Processed {filename}: {message}")
 
-def main(input_source, output_path, frame_rate,user,local_drive):
+def main(input_source, output_path, frame_rate,user= None,local_drive = None):
     logger.info(f"Received arguments: input_source={input_source}, output_path={output_path}, frame_rate={frame_rate},user={user}")
     
     input_bucket = None
@@ -170,7 +170,6 @@ if __name__ == "__main__":
     parser.add_argument('--input_source', type=str, default=os.environ.get('INPUT_SOURCE'))
     parser.add_argument('--output_path', type=str, default=os.environ.get('OUTPUT_PATH'))
     parser.add_argument('--frame_rate', type=int, default=int(os.environ.get('FRAME_RATE', 1)))
-
     args = parser.parse_args()
 
     input_source = args.input_source

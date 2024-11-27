@@ -10,13 +10,14 @@ inputs:
   default: 1
 implementation:
   container:
-    image: us-central1-docker.pkg.dev/racoon-detection-427421/video-frame-extractor-repo/video-frame-extractor:latest
+    image: us-central1-docker.pkg.dev/racoon-detection-427421/video-frame-extractor-repo/video-frame-extractor:latest 
+    # Above image is the image of docker for frame extraction which was kept in the GCP artifact registry.
     command:
     - python
-    - rd_video_image_extractor.py
+    - rd_video_image_extractor.py # Name of the python code to be executed
     args:
     - --input_source
-    - {inputValue: input_source}
+    - {inputValue: input_source} 
     - --output_path
     - {inputValue: output_path}
     - --frame_rate

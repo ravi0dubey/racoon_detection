@@ -2,9 +2,10 @@
 This guide will walk you through the one-time setup required to deploy and run a Vertex AI pipeline that extracts frames from videos using a custom Docker image.
 
 ### Project Information
-- Project Name: eh-ml-mentorship
+- Project Name: racoon-detection
 - Project ID: racoon-detection-427421
-- Project Number: 461769263335
+- Project Number: 427421
+
 - Region: us-central1
 
 ### Table of Contents
@@ -23,11 +24,11 @@ Additional Notes
 Conclusion
 
 ### Prerequisites
-Google Cloud Account: Access to the eh-ml-mentorship project.
+Google Cloud Account: Access to the racoon-detection project.
 Local Machine Setup: Ability to run commands in a terminal and install software.
 
 ```sh
-gcloud config set project eh-ml-mentorship
+gcloud config set project racoon-detection
 gcloud services enable aiplatform.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
 gcloud services enable storage.googleapis.com
@@ -50,5 +51,9 @@ pip install kfp google-cloud-pipeline-components google-cloud-aiplatform
 python pipeline.py
 python submit_pipeline.py
 
-gcloud builds triggers run mentorship-cloudbuild-trigger --region=us-central1 --project=eh-ml-mentorship
+gcloud builds triggers run rd-data-preprocessing-trigger --region=us-central1 --branch=main
+
+INPUT_SOURCE='gs://01-raw_dataset-lco7ubyy'
+OUTPUT_PATH='gs://00-temp-xser'
+FRAME_RATE=1
 ```

@@ -5,3 +5,4 @@ test: test/images # val images (relative to 'path') 4 images test images (option
 # Classes
 names:
  0: racoon
+ 
