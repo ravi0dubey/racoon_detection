@@ -178,10 +178,12 @@ if __name__ == "__main__":
     input_source = args.input_source
     output_path = args.output_path
     frame_rate = args.frame_rate
+    user = args.user
+    local_drive = args.local_drive
 
     if not input_source or not output_path:
         logger.error("INPUT_SOURCE and OUTPUT_PATH must be provided either via command-line arguments or environment variables.")
         exit(1)
 
-    main(input_source, output_path, frame_rate)
+    main(input_source, output_path, frame_rate,user,local_drive)
 
