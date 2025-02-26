@@ -7,7 +7,7 @@ import argparse
 import sys
 from approx_dups import find_approximate_duplicates, deduplicate_approximate_duplicates
 
-def print_environment_variables():
+def print_environment_variables():  
     print("INPUT_BUCKET:", os.getenv('INPUT_BUCKET'))
     print("OUTPUT_BUCKET:", os.getenv('OUTPUT_BUCKET'))
     print("ANNOTATION_SET_BUCKET:", os.getenv('ANNOTATION_SET_BUCKET'))

@@ -2,42 +2,31 @@
 ## Overview
 The eh_video_to_image_extractor.py script extracts frames from video files and saves them as images. It processes all video files (with extensions .mp4, .avi, .mov, .mkv) found recursively in a specified root directory. Frames are extracted at a specified frame rate and saved in a designated output directory.
 
-## If running Locally command to execute
 ```
-python eh_video_to_image_extractor.py "C:\\Users\\Ravi0dubey\\Videos" "C:\\Users\\Ravi0dubey\\Videos\\output" --frame_rate 2
+python eh_video_to_image_extractor.py "C:\\Users\\Ravi0dubey\\Videos" "C:\\Users\\Ravi0dubey\\Videos\\output" [--frame_rate 2]
 ```
 
-## Building the Docker Image Locally
-
+### Building the Docker Image Locally
 Ensure Docker is installed and running on your local machine.
-Execute below command in a sequence.
 ```
-1. cd /path/to/your/project
-2. docker build -t video-frame-extractor:latest .
+cd /path/to/your/project
+docker build -t video-frame-extractor:latest .
 ```
-
-## Running the Docker Container Locally
-
-### 1. For local paths:
-
-#### 1.a Create input and output directory if not already done and copy some video files to the input directory for testing.
+### Running the Docker Container Locally
 ```
-mkdir -p "C:\\Users\\Ravi0dubey\\Videos\\Bandicam" "C:\\Users\\Ravi0dubey\\Videos\\output\\bandicam_output"
-```
+mkdir -p "C:\\Users\\Ravi0dubey\\Videos" "C:\\Users\\Ravi0dubey\\Videos\\output"
+# Copy some video files to the /tmp/input directory for testing.
 
-#### 1.b run below command.
+For local paths:
 
-``` 
-docker run --rm -it \
+# docker run --rm -it \
   -v "C:\\Users\\Ravi0dubey\\Videos\\Bandicam":/app/input \
-  -v "C:\\Users\\Ravi0dubey\\Videos\\Bandicam_output":/app/output \
+  -v "C:\\Users\\Ravi0dubey\\Videos\\bandicam_output":/app/output \
   video-frame-extractor:latest /app/input /app/output --frame_rate 2
-```
-
-### 2. For Google Bucket paths:
-```
+# For GCS paths:
 docker run --rm -it \
   -v /path/to/gcp_service_account.json:/app/gcp_service_account.json \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/gcp_service_account.json \
   video-frame-extractor:latest gs://input-bucket gs://output-bucket --frame_rate 2
+
 ```

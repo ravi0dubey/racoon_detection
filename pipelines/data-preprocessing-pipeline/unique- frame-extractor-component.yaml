@@ -1,0 +1,28 @@
+name: Unique Frame Extractor
+description: Extracts unique frames from videos using advanced filtering techniques
+inputs:
+- name: input_source
+  type: String
+- name: output_path
+  type: String
+- name: frame_rate
+  type: Integer
+  default: 1
+- name: similarity_threshold
+  type: Float
+  default: 0.95
+implementation:
+  container:
+    image: us-central1-docker.pkg.dev/racoon-detection-427421/video-frame-extractor-repo/unique-frame-extractor:latest
+    command:
+    - python
+    - unique_frame_extractor.py
+    args:
+    - --input_source
+    - {inputValue: input_source}
+    - --output_path
+    - {inputValue: output_path}
+    - --frame_rate
+    - {inputValue: frame_rate}
+    - --similarity_threshold
+    - {inputValue: similarity_threshold}
